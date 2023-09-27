@@ -19,22 +19,24 @@ class TrafficSystem:
 
     def snapshot(self):
         """Print a snap shot of the current state of the system."""
-        print(f'Time step {self.time}')
-#        for l in [self.left_lane, self.right_lane]:
-#            print(f'[' + ''.join([vehicle.destination if vehicle is not None else '.' for vehicle in l]) + ']')
+        #print(f'Time step {self.time}')
+        print(f'{self.left_lane.__str__()} {self.right_lane.__str__()}')
         
 
     def step(self):
         """Take one time step for all components."""
         self.time += 1
         if self.left_lane is not None:
-            tc.Lane.remove_first(self)
+            self.left_lane.remove_first()
         self.left_lane.step()
         if self.light.is_green() == True and self.right_lane[0] is not None:
             self.left_lane[-1] = self.right_lane[0]
         self.light.step()
         self.right_lane.step()
-        des.DestinationGenerator.step()
+        self.dest_gen.step()
+        if self.dest_gen is not None:
+            tc.Lane.enter(self.dest_gen.step())
+        
             
 
 
