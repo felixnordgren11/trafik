@@ -28,12 +28,14 @@ class Lane:
         '''
         String representation of lane
         '''
-        return '[' + ''.join([vehicle.destination if vehicle is not None else '.' for vehicle in self.lane_slot]) + ']'
+        #return '[' + ''.join([vehicle.destination if vehicle is not None else '.' for vehicle in self.lane_slot]) + ']'
+        return '[' + ''.join([vehicle.destination if isinstance(vehicle, Vehicle) else '.' for vehicle in self.lane_slot]) + ']'
 
     def enter(self, vehicle):
         """
         Called when a new vehicle enters the end of the lane.
         """
+        #print(f"Adding vehicle {vehicle} to lane")
         self.lane_slot[-1] = vehicle
         
         #
@@ -151,9 +153,9 @@ class Light:
     def is_green(self):
         """Return whether the light is currently green."""
         if self.green == True:
-            return 'True'
+            return True
         else:
-            return 'False'
+            return False
         
             
         

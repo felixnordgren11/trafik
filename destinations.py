@@ -21,3 +21,4 @@ class DestinationGenerator:
         self._internal_time = (self._internal_time + 1) % len(self._arrivals)
         return 'W' if ind == 1 else 'S' if ind == 2 else None
 
+#print(DestinationGenerator.step())
