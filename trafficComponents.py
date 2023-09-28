@@ -65,11 +65,19 @@ class Lane:
         """
         Return the first vehicle in the lane, or None.
         """
-        if not self.lane_slot[0] == None:
-            return self.lane_slot[0]
+        return self.lane_slot[0]
+        
+    
+    def get_last(self):
+        """
+        Return the first vehicle in the lane, or None.
+        
+        if not self.lane_slot[-1] == None:
+            return self.lane_slot[-1]
         else:
             return None
-        
+        """
+        return self.lane_slot[-1]
         #
 
     def remove_first(self):
