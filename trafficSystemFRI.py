@@ -35,27 +35,8 @@ class TrafficSystem:
             'blocked_time' : 0,
             'queue_time' : 0
         }
-    '''
-    def snapshot(self):
-        """
-        Print a snap shot of the current state of the system.
-        """
-        #print(f'Time step {self.time}')
-        if TrafficSystem.hold_sign(self) is not None:
-            print(f'{self.light_west}{self.lane_west.__str__()} {TrafficSystem.hold_sign2(self)} {self.lane_right.__str__()} {self.line}')
-            print(f'{self.light_south}{self.lane_south}')
-        else:
-            print(f'{self.light_west}{self.lane_west.__str__()} {self.lane_right.__str__()} {self.line}')
-            print(f'{self.light_south}{self.lane_south}')
         
-    def hold_sign2(self):
-        if all(vehicle is not None for vehicle in self.lane_west.lane_slot) and tc.Lane.get_first(self.lane_right) == 'W':
-            return '*'
-        elif all(vehicle is not None for vehicle in self.lane_south.lane_slot) and tc.Lane.get_first(self.lane_right) == 'S':
-            return '*'
-        else:
-            pass
-    '''
+        
     def snapshot(self):
         """
         Print a snap shot of the current state of the system.
@@ -73,12 +54,13 @@ class TrafficSystem:
         right_lane_first_direction = tc.Lane.get_first(self.lane_right)
         if right_lane_first_direction is not None:
             rld = right_lane_first_direction.destination
-        if all(vehicle is not None for vehicle in self.lane_west.lane_slot) and rld == 'W':
-            self.stats['blocked_time'] += 1
-            return True
-        elif all(vehicle is not None for vehicle in self.lane_south.lane_slot) and rld == 'S':
-            self.stats['blocked_time'] += 1
-            return True
+            if rld is not None:
+                if all(vehicle is not None for vehicle in self.lane_west.lane_slot) and rld == 'W':
+                    self.stats['blocked_time'] += 1
+                    return True
+                elif all(vehicle is not None for vehicle in self.lane_south.lane_slot) and rld == 'S':
+                    self.stats['blocked_time'] += 1
+                    return True
         return False
 
 
