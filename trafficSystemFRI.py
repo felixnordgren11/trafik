@@ -23,6 +23,7 @@ class TrafficSystem:
         self.light_south = tc.Light(14,4)
         self.dest_gen = des.DestinationGenerator()
         self.line = []
+        self.in_line = 0
         
         self.stats = {
             'vehicles_created' : 0,
@@ -69,9 +70,11 @@ class TrafficSystem:
         if tc.Light.is_green(self.light_west) and tc.Lane.get_first(self.lane_west):
             self.lane_west.remove_first()
             self.stats['vehicles_out']['west'] += 1
+            self.stats['vehicles_in_system'] -= 1
         if tc.Light.is_green(self.light_south) and tc.Lane.get_first(self.lane_south):
             self.lane_south.remove_first()
             self.stats['vehicles_out']['south'] += 1
+            self.stats['vehicles_in_system'] -= 1
         self.lane_west.step()
         self.lane_south.step()
         
@@ -104,17 +107,32 @@ class TrafficSystem:
                 #print(f'{self.lane_right.lane_slot[-1] == None}')
                 line0 = self.line.pop(0)
                 vehicle = tc.Vehicle(line0, self.time)
+                self.stats['vehicles_created'] += 1
+                self.stats['vehicles_in_system'] += 1
                 self.lane_right.enter(vehicle)
         elif self.line and self.lane_right.lane_slot[-1] is None:
             line0 = self.line.pop(0)
             vehicle = tc.Vehicle(line0, self.time)
+            self.stats['vehicles_created'] += 1
+            self.stats['vehicles_in_system'] += 1
             self.lane_right.enter(vehicle)
+        self.in_line = sum(self.line)
+        if self.in_line:
+            self.stats['queue_time'] += self.in_line
         self.light_south.step()
         self.light_west.step()
         
         
     
     def print_statistics():
+        ts = TrafficSystem
+        block_fraction = ts.stats['blocked_time']/ts.time
+        queue_fraction = ts.stats['queue_time']/ts.time
+        print("Statistics of simulation")
+        print(f"Vehicles created: {ts.stats['vehicles_created']}")
+        print(f"Vehicles created: {ts.stats['vehicles_in_system']}")
+        print(f'Blocked time: {block_fraction}')
+        print(f'Queue time: {queue_fraction}')
         pass
                 
             
@@ -132,6 +150,7 @@ def main():
         ts.step()
         sleep(0.01) # Pause for 0.1 s.
     print('\nFinal state:')
+    ts.print_statistics()
     ts.snapshot()
     print()
 
