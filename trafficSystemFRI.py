@@ -16,14 +16,13 @@ class TrafficSystem:
         system.
         """
         self.time = 0
-        self.lane_west = tc.Lane(4)
-        self.lane_south = tc.Lane(4)
-        self.lane_right = tc.Lane(6)
+        self.lane_west = tc.Lane(6)
+        self.lane_south = tc.Lane(6)
+        self.lane_right = tc.Lane(7)
         self.light_west = tc.Light(14,6)
-        self.light_south = tc.Light(14,4)
+        self.light_south = tc.Light(14,7)
         self.dest_gen = des.DestinationGenerator()
         self.line = []
-        self.in_line = 0
         
         self.stats = {
             'vehicles_created' : 0,
@@ -116,23 +115,23 @@ class TrafficSystem:
             self.stats['vehicles_created'] += 1
             self.stats['vehicles_in_system'] += 1
             self.lane_right.enter(vehicle)
-        self.in_line = sum(self.line)
-        if self.in_line:
-            self.stats['queue_time'] += self.in_line
+        if self.line:
+            self.stats['queue_time'] += 1
+            
         self.light_south.step()
         self.light_west.step()
+        self.time += 1
         
         
     
-    def print_statistics():
-        ts = TrafficSystem
-        block_fraction = ts.stats['blocked_time']/ts.time
-        queue_fraction = ts.stats['queue_time']/ts.time
+    def print_statistics(self):
+        block_fraction = round(self.stats['blocked_time']/self.time,2)*100
+        queue_fraction = round(self.stats['queue_time']/self.time,2)*100
         print("Statistics of simulation")
-        print(f"Vehicles created: {ts.stats['vehicles_created']}")
-        print(f"Vehicles created: {ts.stats['vehicles_in_system']}")
-        print(f'Blocked time: {block_fraction}')
-        print(f'Queue time: {queue_fraction}')
+        print(f"Vehicles created: {self.stats['vehicles_created']}")
+        print(f"Vehicles in system: {self.stats['vehicles_in_system']}")
+        print(f'Blocked time: {block_fraction} %')
+        print(f'Queue time: {queue_fraction} %')
         pass
                 
             
@@ -145,13 +144,13 @@ class TrafficSystem:
 
 def main():
     ts = TrafficSystem()
-    for _ in range(300):
+    for _ in range(100):
         ts.snapshot()
         ts.step()
         sleep(0.01) # Pause for 0.1 s.
     print('\nFinal state:')
-    ts.print_statistics()
     ts.snapshot()
+    ts.print_statistics()
     print()
 
 
